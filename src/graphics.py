@@ -15,18 +15,21 @@ class Board:
         self.root.title("WUMPUS WORLD")
         self.root.geometry("+200+50")
 
-        self.canvas = Canvas(self.root, width=64 * world.width, height=64 * world.height + 64, background='white')
-        self.outputFrame = Frame(self.root)
-        
-        self.canvas.pack(side="left", fill="both", expand=True)
-        self.outputFrame.pack(side="right", fill="both", expand=False)
+        self.canvas = Canvas(self.root, width=64 * world.width, height=64 * world.height + 64, background='black')
+        self.outputFrame = Frame(self.root, bg="black")
+        self.outputFrame = Frame(self.root, bg="black")
+        self.outputFrame.option_add("*Foreground", "white")
+        self.outputFrame.option_add("*Background", "black")
+        self.canvas.pack(side="right", fill="both", expand=True)
+        self.outputFrame.pack(side="left", fill="both", expand=False)
         
         # KB and Action
         self.KBArea = None
         self.actionArea = None
         self.buttonStep = None
         self.buttonRun = None
-        self.buttonFont = font.Font(size=10)
+        self.buttonFont = font.Font(size=10, weight="bold")
+
 
         self.runMode = -1
 
@@ -40,6 +43,8 @@ class Board:
         self.display_score = None
 
         self.scoreFont = font.Font(family='KacstBook', size=22)
+
+        
 
         # Load images
         self.DOOR = PhotoImage(file='../assets/door.png')
@@ -71,6 +76,30 @@ class Board:
         # Score
         self.score = 0
 
+    def rounded_button(canvas, x, y, width, height, radius, text, bg, fg, font_style, command):
+        # Các phần bo góc
+        canvas.create_oval(x, y, x+radius*2, y+radius*2, fill=bg, outline=bg)
+        canvas.create_oval(x+width-radius*2, y, x+width, y+radius*2, fill=bg, outline=bg)
+        canvas.create_oval(x, y+height-radius*2, x+radius*2, y+height, fill=bg, outline=bg)
+        canvas.create_oval(x+width-radius*2, y+height-radius*2, x+width, y+height, fill=bg, outline=bg)
+        canvas.create_rectangle(x+radius, y, x+width-radius, y+height, fill=bg, outline=bg)
+        canvas.create_rectangle(x, y+radius, x+width, y+height-radius, fill=bg, outline=bg)
+
+        # Text giữa nút
+        btn_text = canvas.create_text(
+            x + width/2, y + height/2,
+            text=text, fill=fg, font=font_style
+        )
+
+        # Xử lý click
+        def on_click(event):
+            if command:
+                command()
+        canvas.tag_bind(btn_text, "<Button-1>", on_click)
+        canvas.tag_bind("all", "<Button-1>", on_click)  # click ở đâu trên nút cũng nhận
+    def changeRunMode(self, mode):
+        self.runMode = mode
+        print(f"Run mode changed to: {mode}")
 
     ############################# CREATE WORLD #############################
 
@@ -103,7 +132,7 @@ class Board:
             self.objects.append(objects_line)
 
 
-        warningFont = font.Font(family='Verdana', size=10)
+        warningFont = font.Font(family='Verdana', size=10, weight="bold")
         for i in range(self.world.height):
             warnings_line = []
             for j in range(self.world.width):
@@ -111,7 +140,7 @@ class Board:
                 tile_at_loc = self.world.listTiles[i][j]
                 first_cord = (i, j)
                 if tile_at_loc.getBreeze():
-                    warning_at_loc.append(self.canvas.create_text(64 * j + 3, 64 * i, fill='white', font=warningFont, text='Breeze', anchor=NW))
+                    warning_at_loc.append(self.canvas.create_text(64 * j + 3, 64 * i, fill='black', font=warningFont, text='Breeze', anchor=NW))
                 else:
                     warning_at_loc.append(None)
                 if tile_at_loc.getStench():

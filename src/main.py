@@ -6,11 +6,11 @@ wumpus_world = world.WumpusWorld()
 
 if sys.argv[1] == 'random':
     agentPos_i, agentPos_j, numPit, numWumpus, numGold = sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]
-    if int(numPit) + int(numGold) + int(numWumpus) >= 100:
+    if int(numPit) + int(numGold) + int(numWumpus) >= 64:
         print("Invalid arguments. Please check your command")
     else:
         try:
-            wumpus_world.generate_Map((int(agentPos_i), int(agentPos_j)), int(numPit), int(numWumpus), int(numGold), 10, 10)
+            wumpus_world.generate_Map((int(agentPos_i), int(agentPos_j)), int(numPit), int(numWumpus), int(numGold), 11, 11)
         except:
             print("Something is wrong. Please check your command.")
         board = graphics.Board(wumpus_world)
